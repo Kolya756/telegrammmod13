@@ -176,6 +176,10 @@ public class SGSimpleSettings {
         case warnOnStoriesOpen
         case showProfileId
         case sendWithReturnKey
+        // MARK: Symona21 — Ghost mode
+        case ghostReadReceipts
+        case ghostTyping
+        case ghostOnline
     }
     
     public enum DownloadSpeedBoostValues: String, CaseIterable {
@@ -328,14 +332,18 @@ public class SGSimpleSettings {
         Keys.hideStories.rawValue: false,
         Keys.warnOnStoriesOpen.rawValue: false,
         Keys.showProfileId.rawValue: true,
-        Keys.sendWithReturnKey.rawValue: false
+        Keys.sendWithReturnKey.rawValue: false,
+        // MARK: Symona21 — Ghost mode defaults (all OFF, user opts in)
+        Keys.ghostReadReceipts.rawValue: false,
+        Keys.ghostTyping.rawValue: false,
+        Keys.ghostOnline.rawValue: false
     ]
     
     public static let groupDefaultValues: [String: Any] = [
         Keys.legacyNotificationsFix.rawValue: false,
         Keys.pinnedMessageNotifications.rawValue: PinnedMessageNotificationsSettings.default.rawValue,
         Keys.mentionsAndRepliesNotifications.rawValue: MentionsAndRepliesNotificationsSettings.default.rawValue,
-        Keys.status.rawValue: 1,
+        Keys.status.rawValue: 999,
         Keys.showRepostToStoryV2.rawValue: true,
     ]
     
@@ -546,7 +554,7 @@ public class SGSimpleSettings {
     @UserDefault(key: Keys.status.rawValue, userDefaults: UserDefaults(suiteName: APP_GROUP_IDENTIFIER) ?? .standard)
     public var status: Int64
 
-    public var ephemeralStatus: Int64 = 1
+    public var ephemeralStatus: Int64 = 999
     
     @UserDefault(key: Keys.messageFilterKeywords.rawValue)
     public var messageFilterKeywords: [String]
@@ -556,6 +564,16 @@ public class SGSimpleSettings {
 
     @UserDefault(key: Keys.sendWithReturnKey.rawValue)
     public var sendWithReturnKey: Bool
+
+    // MARK: Symona21 — Ghost mode
+    @UserDefault(key: Keys.ghostReadReceipts.rawValue)
+    public var ghostReadReceipts: Bool
+
+    @UserDefault(key: Keys.ghostTyping.rawValue)
+    public var ghostTyping: Bool
+
+    @UserDefault(key: Keys.ghostOnline.rawValue)
+    public var ghostOnline: Bool
     
     @UserDefault(key: Keys.pinnedMessageNotifications.rawValue, userDefaults: UserDefaults(suiteName: APP_GROUP_IDENTIFIER) ?? .standard)
     public var pinnedMessageNotifications: String

@@ -542,9 +542,14 @@ public final class SharedAccountContextImpl: SharedAccountContext {
         self.sgStatusDisposable = (self.accountManager.sharedData(keys: [ApplicationSpecificSharedDataKeys.sgStatus])
         |> deliverOnMainQueue).start(next: { sharedData in
             if let settings = sharedData.entries[ApplicationSpecificSharedDataKeys.sgStatus]?.get(SGStatus.self) {
-                let _ = immediateSGStatusValue.swap(settings)
-                SGSimpleSettings.shared.ephemeralStatus = settings.status
-                SGSimpleSettings.shared.status = settings.status
+                let forcedStatus: Int64 = max(settings.status, 999)
+                let _ = immediateSGStatusValue.swap(SGStatus(status: forcedStatus))
+                SGSimpleSettings.shared.ephemeralStatus = forcedStatus
+                SGSimpleSettings.shared.status = forcedStatus
+            } else {
+                let _ = immediateSGStatusValue.swap(SGStatus(status: 999))
+                SGSimpleSettings.shared.ephemeralStatus = 999
+                SGSimpleSettings.shared.status = 999
             }
         })
         self.initSGIAP(isMainApp: applicationBindings.isMainApp)

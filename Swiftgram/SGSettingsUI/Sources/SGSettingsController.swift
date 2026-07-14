@@ -43,6 +43,7 @@ private enum SGControllerSection: Int32, SGItemListSection {
     case contextMenu
     case accountColors
     case other
+    case ghost // MARK: Symona21
 }
 
 private enum SGBoolSetting: String {
@@ -106,6 +107,10 @@ private enum SGBoolSetting: String {
     case nyStyleSnow
     case nyStyleLightning
     case tabBarSearchEnabled
+    // MARK: Symona21 — Ghost mode
+    case ghostReadReceipts
+    case ghostTyping
+    case ghostOnline
 }
 
 private enum SGOneFromManySetting: String {
@@ -328,7 +333,14 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
     entries.append(.notice(id: id.count, section: .other, text: i18n("Settings.DefaultEmojisFirst.Notice", lang)))
     entries.append(.toggle(id: id.count, section: .other, settingName: .hidePhoneInSettings, value: SGSimpleSettings.shared.hidePhoneInSettings, text: i18n("Settings.HidePhoneInSettingsUI", lang), enabled: true))
     entries.append(.notice(id: id.count, section: .other, text: i18n("Settings.HidePhoneInSettingsUI.Notice", lang)))
-    
+
+    // MARK: Symona21 — Ghost mode section
+    entries.append(.header(id: id.count, section: .ghost, text: i18n("Settings.Ghost.Header", lang), badge: nil))
+    entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostReadReceipts, value: SGSimpleSettings.shared.ghostReadReceipts, text: i18n("Settings.Ghost.ReadReceipts", lang), enabled: true))
+    entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostTyping, value: SGSimpleSettings.shared.ghostTyping, text: i18n("Settings.Ghost.Typing", lang), enabled: true))
+    entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostOnline, value: SGSimpleSettings.shared.ghostOnline, text: i18n("Settings.Ghost.Online", lang), enabled: true))
+    entries.append(.notice(id: id.count, section: .ghost, text: i18n("Settings.Ghost.Notice", lang)))
+
     return filterSGItemListUIEntrires(entries: entries, by: state.searchQuery)
 }
 
@@ -521,6 +533,13 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
         case .nyStyleLightning:
             SGSimpleSettings.shared.nyStyle = value ? SGSimpleSettings.NYStyle.lightning.rawValue : SGSimpleSettings.NYStyle.default.rawValue
             simplePromise.set(true) // Trigger update for 'enabled' field of other toggles
+        // MARK: Symona21 — Ghost mode
+        case .ghostReadReceipts:
+            SGSimpleSettings.shared.ghostReadReceipts = value
+        case .ghostTyping:
+            SGSimpleSettings.shared.ghostTyping = value
+        case .ghostOnline:
+            SGSimpleSettings.shared.ghostOnline = value
         }
     }, updateSliderValue: { setting, value in
         switch (setting) {
