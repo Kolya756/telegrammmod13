@@ -313,7 +313,7 @@ public class SGSimpleSettings {
         Keys.wideChannelPosts.rawValue: false,
         Keys.forceEmojiTab.rawValue: false,
         Keys.hideChannelBottomButton.rawValue: false,
-        Keys.secondsInMessages.rawValue: false,
+        Keys.secondsInMessages.rawValue: true, // MARK: Symona21 — always show precise timestamps
         Keys.forceSystemSharing.rawValue: false,
         Keys.confirmCalls.rawValue: true,
         Keys.videoPIPSwipeDirection.rawValue: VideoPIPSwipeDirection.up.rawValue,

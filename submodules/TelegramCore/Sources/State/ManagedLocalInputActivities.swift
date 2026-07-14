@@ -3,6 +3,7 @@ import Postbox
 import SwiftSignalKit
 import TelegramApi
 import MtProtoKit
+import SGSimpleSettings // MARK: Symona21 — Ghost mode
 
 
 public struct PeerActivitySpace: Hashable {
@@ -175,6 +176,10 @@ private func requestActivity(postbox: Postbox, network: Network, accountPeerId: 
                 }
             }
             
+            // MARK: Symona21 — Ghost mode: don't broadcast typing / activity
+            if SGSimpleSettings.shared.ghostTyping {
+                return .complete()
+            }
             if let inputPeer = apiInputPeer(peer) {
                 var flags: Int32 = 0
                 let topMessageId = threadId.flatMap { Int32(clamping: $0) }

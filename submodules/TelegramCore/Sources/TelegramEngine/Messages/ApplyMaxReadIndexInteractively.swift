@@ -2,15 +2,24 @@ import Foundation
 import Postbox
 import TelegramApi
 import SwiftSignalKit
+import SGSimpleSettings // MARK: Symona21 — Ghost mode
 
 
 func _internal_applyMaxReadIndexInteractively(postbox: Postbox, stateManager: AccountStateManager, index: MessageIndex) -> Signal<Void, NoError> {
+    // MARK: Symona21 — Ghost mode: don't mark messages as read
+    if SGSimpleSettings.shared.ghostReadReceipts {
+        return .complete()
+    }
     return postbox.transaction { transaction -> Void in
         _internal_applyMaxReadIndexInteractively(transaction: transaction, stateManager: stateManager, index: index)
     }
 }
-    
+
 func _internal_applyMaxReadIndexInteractively(transaction: Transaction, stateManager: AccountStateManager, index: MessageIndex) {
+    // MARK: Symona21 — Ghost mode: don't mark messages as read
+    if SGSimpleSettings.shared.ghostReadReceipts {
+        return
+    }
     let messageIds = transaction.applyInteractiveReadMaxIndex(index)
     
     if let peer = transaction.getPeer(index.id.peerId), peer.isForumOrMonoForum {
