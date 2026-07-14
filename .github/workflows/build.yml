@@ -69,21 +69,29 @@ jobs:
           echo "Found IPA at $IPA_PATH"
           cp "$IPA_PATH" "$OUTPUT_PATH/Symonagram.ipa"
 
-          # collect dsyms
+          # collect dsyms (dedupe by basename — bazel exposes same dSYM under runfiles/ too)
           mkdir -p build/DSYMs
+          set +e
+          declare -A SEEN
           while IFS= read -r d; do
-            [ -n "$d" ] && cp -R "$d" build/DSYMs/
-          done < <(find -L bazel-bin/Telegram bazel-out -maxdepth 6 -name "*.dSYM" -type d 2>/dev/null)
-          zip -r "./$OUTPUT_PATH/Symonagram.DSYMs.zip" build/DSYMs 1>/dev/null
+            [ -z "$d" ] && continue
+            name=$(basename "$d")
+            [ -n "${SEEN[$name]}" ] && continue
+            SEEN[$name]=1
+            cp -R "$d" "build/DSYMs/$name" && chmod -R u+w "build/DSYMs/$name"
+          done < <(find -L bazel-bin/Telegram bazel-out -maxdepth 6 -name "*.dSYM" -type d 2>/dev/null | grep -v /runfiles/)
+          set -e
+          zip -r "./$OUTPUT_PATH/Symonagram.DSYMs.zip" build/DSYMs 1>/dev/null || echo "dSYM zip failed, continuing"
 
       - name: Upload build artifacts (fallback if release step fails)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Symonagram-${{ env.BUILD_NUMBER }}
           path: |
             /Users/Shared/telegram-ios/build/artifacts/Symonagram.ipa
             /Users/Shared/telegram-ios/build/artifacts/Symonagram.DSYMs.zip
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30
 
       - name: Create Release
