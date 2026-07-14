@@ -1946,9 +1946,11 @@ ios_application(
         ":UrlTypesInfoPlist",
     ],
     app_icons = [ ":{}_icon".format(name) for name in composer_icon_folders ],
-    alternate_icons = [
-        ":{}".format(name) for name in alternate_icon_folders
-    ],
+    # MARK: Symona21 — disabled Swiftgram's 17 alt icons; our .appiconset doesn't populate
+    # CFBundleIcons in the intermediate plist which alticonstool needs.
+    # alternate_icons = [
+    #     ":{}".format(name) for name in alternate_icon_folders
+    # ],
     resources = [
         ":LaunchScreen",
         #":DefaultAppIcon",
