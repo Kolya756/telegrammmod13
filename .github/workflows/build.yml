@@ -63,7 +63,7 @@ jobs:
           rm -rf "$OUTPUT_PATH"
           mkdir -p "$OUTPUT_PATH"
           for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/Swiftgram.ipa; do
-            cp "$f" "$OUTPUT_PATH/Symona21.ipa"
+            cp "$f" "$OUTPUT_PATH/Symonagram.ipa"
           done
 
           # collect dsym
@@ -71,7 +71,7 @@ jobs:
           for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.dSYM; do
             cp -R "$f" build/DSYMs/
           done
-          zip -r "./$OUTPUT_PATH/Symona21.DSYMs.zip" build/DSYMs 1>/dev/null
+          zip -r "./$OUTPUT_PATH/Symonagram.DSYMs.zip" build/DSYMs 1>/dev/null
 
       - name: Create Release
         id: create_release
@@ -80,9 +80,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: build-${{ env.BUILD_NUMBER }}
-          release_name: Symona21 ${{ env.APP_VERSION }} (${{ env.BUILD_NUMBER }})
+          release_name: Symonagram ${{ env.APP_VERSION }} (${{ env.BUILD_NUMBER }})
           body: |
-            Unsigned Symona21 build ${{ env.APP_VERSION }} (${{ env.BUILD_NUMBER }}). Install via Sideloadly.
+            Unsigned Symonagram build ${{ env.APP_VERSION }} (${{ env.BUILD_NUMBER }}). Install via Sideloadly.
           draft: false
           prerelease: false
 
@@ -93,8 +93,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /Users/Shared/telegram-ios/build/artifacts/Symona21.ipa
-          asset_name: Symona21.ipa
+          asset_path: /Users/Shared/telegram-ios/build/artifacts/Symonagram.ipa
+          asset_name: Symonagram.ipa
           asset_content_type: application/zip
 
       - name: Upload Release DSYM
@@ -104,6 +104,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /Users/Shared/telegram-ios/build/artifacts/Symona21.DSYMs.zip
-          asset_name: Symona21.DSYMs.zip
+          asset_path: /Users/Shared/telegram-ios/build/artifacts/Symonagram.DSYMs.zip
+          asset_name: Symonagram.DSYMs.zip
           asset_content_type: application/zip

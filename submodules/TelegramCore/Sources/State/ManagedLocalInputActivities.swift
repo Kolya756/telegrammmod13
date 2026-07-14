@@ -3,7 +3,7 @@ import Postbox
 import SwiftSignalKit
 import TelegramApi
 import MtProtoKit
-import SGSimpleSettings // MARK: Symona21 — Ghost mode
+import SGSimpleSettings // MARK: Symonagram — Ghost mode
 
 
 public struct PeerActivitySpace: Hashable {
@@ -176,7 +176,7 @@ private func requestActivity(postbox: Postbox, network: Network, accountPeerId: 
                 }
             }
             
-            // MARK: Symona21 — Ghost mode: don't broadcast typing / activity
+            // MARK: Symonagram — Ghost mode: don't broadcast typing / activity
             if SGSimpleSettings.shared.ghostTyping {
                 return .complete()
             }

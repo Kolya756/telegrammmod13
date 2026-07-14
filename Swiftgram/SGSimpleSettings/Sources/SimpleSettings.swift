@@ -176,7 +176,7 @@ public class SGSimpleSettings {
         case warnOnStoriesOpen
         case showProfileId
         case sendWithReturnKey
-        // MARK: Symona21 — Ghost mode
+        // MARK: Symonagram — Ghost mode
         case ghostReadReceipts
         case ghostTyping
         case ghostOnline
@@ -313,7 +313,7 @@ public class SGSimpleSettings {
         Keys.wideChannelPosts.rawValue: false,
         Keys.forceEmojiTab.rawValue: false,
         Keys.hideChannelBottomButton.rawValue: false,
-        Keys.secondsInMessages.rawValue: true, // MARK: Symona21 — always show precise timestamps
+        Keys.secondsInMessages.rawValue: true, // MARK: Symonagram — always show precise timestamps
         Keys.forceSystemSharing.rawValue: false,
         Keys.confirmCalls.rawValue: true,
         Keys.videoPIPSwipeDirection.rawValue: VideoPIPSwipeDirection.up.rawValue,
@@ -333,7 +333,7 @@ public class SGSimpleSettings {
         Keys.warnOnStoriesOpen.rawValue: false,
         Keys.showProfileId.rawValue: true,
         Keys.sendWithReturnKey.rawValue: false,
-        // MARK: Symona21 — Ghost mode defaults (all OFF, user opts in)
+        // MARK: Symonagram — Ghost mode defaults (all OFF, user opts in)
         Keys.ghostReadReceipts.rawValue: false,
         Keys.ghostTyping.rawValue: false,
         Keys.ghostOnline.rawValue: false
@@ -565,7 +565,7 @@ public class SGSimpleSettings {
     @UserDefault(key: Keys.sendWithReturnKey.rawValue)
     public var sendWithReturnKey: Bool
 
-    // MARK: Symona21 — Ghost mode
+    // MARK: Symonagram — Ghost mode
     @UserDefault(key: Keys.ghostReadReceipts.rawValue)
     public var ghostReadReceipts: Bool
 

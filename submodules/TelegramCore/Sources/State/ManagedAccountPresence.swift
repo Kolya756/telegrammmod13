@@ -3,7 +3,7 @@ import TelegramApi
 import Postbox
 import SwiftSignalKit
 import MtProtoKit
-import SGSimpleSettings // MARK: Symona21 — Ghost mode
+import SGSimpleSettings // MARK: Symonagram — Ghost mode
 
 private typealias SignalKitTimer = SwiftSignalKit.Timer
 
@@ -44,7 +44,7 @@ private final class AccountPresenceManagerImpl {
     }
     
     private func updatePresence(_ isOnline: Bool) {
-        // MARK: Symona21 — Ghost mode: never broadcast online
+        // MARK: Symonagram — Ghost mode: never broadcast online
         let effectiveIsOnline = SGSimpleSettings.shared.ghostOnline ? false : isOnline
         let request: Signal<Api.Bool, MTRpcError>
         if effectiveIsOnline {
