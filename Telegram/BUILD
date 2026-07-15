@@ -77,7 +77,9 @@ config_setting(
 
 bool_flag(
     name = "disableExtensions",
-    build_setting_default = False,
+    # MARK: Symonagram — free-account sideloading has no App Group, so every extension is dead weight
+    # that still burns one of the 10 App IDs Apple allows per 7 days. Ship the app target alone.
+    build_setting_default = True,
     visibility = ["//visibility:public"],
 )
 
@@ -351,9 +353,12 @@ composer_icon_folders = ["Swiftgram"]
 [
     filegroup(
         name = "{}_icon".format(name),
+        # MARK: Symonagram — actool only compiles an icon set that lives inside a .xcassets wrapper.
+        # A bare .appiconset is silently copied into the bundle root instead, which leaves the app
+        # with no CFBundleIcons and no home screen icon.
         srcs = glob([
-            "Telegram-iOS/{}.appiconset/**/*".format(name),
-        ]),
+            "Telegram-iOS/DefaultAppIcon.xcassets/AppIconLLC.appiconset/**/*",
+        ], exclude = ["Telegram-iOS/DefaultAppIcon.xcassets/**/.*"]),
     ) for name in composer_icon_folders
 ]
 

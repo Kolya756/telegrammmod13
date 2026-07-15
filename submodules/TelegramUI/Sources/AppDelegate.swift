@@ -303,7 +303,12 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         let appGroupName = "group.\(baseAppBundleId)"
 
         let configuration = URLSessionConfiguration.background(withIdentifier: identifier)
-        configuration.sharedContainerIdentifier = appGroupName
+        // MARK: Symonagram
+        // Pointing a background session at an App Group we hold no entitlement for makes it unusable,
+        // so only set the shared container when it actually resolves.
+        if FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupName) != nil {
+            configuration.sharedContainerIdentifier = appGroupName
+        }
         configuration.isDiscretionary = false
         let session = URLSession(configuration: configuration, delegate: self, delegateQueue: .main)
         self.urlSessions.append(session)
@@ -659,7 +664,16 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             isICloudEnabled: buildConfig.isICloudEnabled
         )
         
-        guard let appGroupUrl = maybeAppGroupUrl else {
+        // MARK: Symonagram
+        // A free-provisioned build carries no App Group entitlement, so containerURL(...) returns nil.
+        // Fall back to this app's own container so launch can proceed. Extensions lose access to the
+        // shared data, but the app itself is fully functional.
+        let appGroupUrl: URL
+        if let maybeAppGroupUrl = maybeAppGroupUrl {
+            appGroupUrl = maybeAppGroupUrl
+        } else if let localUrl = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first {
+            appGroupUrl = localUrl
+        } else {
             self.mainWindow?.presentNative(UIAlertController(title: nil, message: "Error 2", preferredStyle: .alert))
             return true
         }
