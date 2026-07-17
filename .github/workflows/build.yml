@@ -93,38 +93,7 @@ jobs:
             /Users/Shared/telegram-ios/build/artifacts/Symonagram.DSYMs.zip
           if-no-files-found: warn
           retention-days: 30
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: build-${{ env.BUILD_NUMBER }}
-          release_name: Symonagram ${{ env.APP_VERSION }} (${{ env.BUILD_NUMBER }})
-          body: |
-            Unsigned Symonagram build ${{ env.APP_VERSION }} (${{ env.BUILD_NUMBER }}). Install via Sideloadly.
-          draft: false
-          prerelease: false
-
-      - name: Upload Release IPA
-        id: upload-release-ipa
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /Users/Shared/telegram-ios/build/artifacts/Symonagram.ipa
-          asset_name: Symonagram.ipa
-          asset_content_type: application/zip
-
-      - name: Upload Release DSYM
-        id: upload-release-dsym
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /Users/Shared/telegram-ios/build/artifacts/Symonagram.DSYMs.zip
-          asset_name: Symonagram.DSYMs.zip
-          asset_content_type: application/zip
+          # IPA + dSYMs are delivered via this artifact upload. The old
+          # actions/create-release steps were removed: GITHUB_TOKEN has no
+          # release-write permission here, so they always failed and marked the
+          # whole run red even though the build + artifact succeeded.
