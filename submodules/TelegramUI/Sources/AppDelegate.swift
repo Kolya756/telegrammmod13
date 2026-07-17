@@ -672,7 +672,15 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         if let maybeAppGroupUrl = maybeAppGroupUrl {
             appGroupUrl = maybeAppGroupUrl
         } else if let localUrl = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first {
-            appGroupUrl = localUrl
+            // Symonagram: a free-provisioned build carries no App Group entitlement, so
+            // containerURL(...) is nil. Do NOT use the Library root as the container directly:
+            // performAppGroupUpgrades() enumerates the container and removes every top-level
+            // directory except "telegram-data"/"Library". Against the Library root that wipes
+            // Caches/Preferences/SplashBoard on every launch -> black screen + crash. Use a
+            // dedicated, namespaced subdirectory whose only child is telegram-data.
+            let containerUrl = localUrl.appendingPathComponent("telegram-app-group")
+            let _ = try? FileManager.default.createDirectory(at: containerUrl, withIntermediateDirectories: true, attributes: nil)
+            appGroupUrl = containerUrl
         } else {
             self.mainWindow?.presentNative(UIAlertController(title: nil, message: "Error 2", preferredStyle: .alert))
             return true
@@ -706,7 +714,13 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         if !isUITest {
         performAppGroupUpgrades(appGroupPath: appGroupUrl.path, rootPath: rootPath)
         }
-        
+
+        // Symonagram: performAppGroupUpgrades creates rootPath asynchronously, but the DB
+        // encryption key (.tempkey) is written into rootPath synchronously just below. Ensure
+        // the directory exists first so the key persists across launches (otherwise a fresh key
+        // is generated every launch, the Postbox can't be decrypted, and it re-login loops).
+        let _ = try? FileManager.default.createDirectory(atPath: rootPath, withIntermediateDirectories: true, attributes: nil)
+
         let deviceSpecificEncryptionParameters = BuildConfig.deviceSpecificEncryptionParameters(rootPath, baseAppBundleId: baseAppBundleId)
         let encryptionParameters = ValueBoxEncryptionParameters(forceEncryptionIfNoSet: false, key: ValueBoxEncryptionParameters.Key(data: deviceSpecificEncryptionParameters.key)!, salt: ValueBoxEncryptionParameters.Salt(data: deviceSpecificEncryptionParameters.salt)!)
         
