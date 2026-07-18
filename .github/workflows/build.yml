@@ -29,6 +29,9 @@ jobs:
           mv /Users/Shared/$(basename $GITHUB_WORKSPACE) /Users/Shared/telegram-ios
 
       - name: Build the App
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
         run: |
           set -x
 
@@ -39,6 +42,16 @@ jobs:
           BAZEL_USER_ROOT="/private/var/tmp/_bazel_containerhost"
 
           cd $SOURCE_DIR
+
+          # Symonagram: inject the real Telegram api_id/api_hash from CI secrets so they
+          # never sit in the public repo. If the secrets are unset the placeholder stays
+          # (the app still builds, but phone login will not work).
+          if [ -n "$TELEGRAM_API_ID" ] && [ -n "$TELEGRAM_API_HASH" ]; then
+            python3 -c 'import json,os; p="build-system/appstore-configuration.json"; c=json.load(open(p)); c["api_id"]=os.environ["TELEGRAM_API_ID"]; c["api_hash"]=os.environ["TELEGRAM_API_HASH"]; json.dump(c,open(p,"w"),indent="\t")'
+            echo "Injected Telegram API credentials from CI secrets."
+          else
+            echo "WARNING: TELEGRAM_API_ID / TELEGRAM_API_HASH secrets are not set; using placeholder (phone login will not work)."
+          fi
 
           BUILD_NUMBER_OFFSET="$(cat build_number_offset)"
 

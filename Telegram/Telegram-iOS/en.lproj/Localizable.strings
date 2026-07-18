@@ -401,23 +401,23 @@
 "Date.ChatDateHeaderYear" = "%1$@ %2$@, %3$@";
 
 // Tour
-"Tour.Title1" = "Swiftgram";
+"Tour.Title1" = "Symonagram";
 "Tour.Text1" = "The world's **fastest** messaging app.\nIt is **free** and **secure**.";
 
 "Tour.Title2" = "Fast";
-"Tour.Text2" = "**Swiftgram** delivers messages\nfaster than any other application.";
+"Tour.Text2" = "**Symonagram** delivers messages\nfaster than any other application.";
 
 "Tour.Title3" = "Powerful";
-"Tour.Text3" = "**Swiftgram** has no limits on\nthe size of your media and chats.";
+"Tour.Text3" = "**Symonagram** has no limits on\nthe size of your media and chats.";
 
 "Tour.Title4" = "Secure";
-"Tour.Text4" = "**Swiftgram** keeps your messages\nsafe from hacker attacks.";
+"Tour.Text4" = "**Symonagram** keeps your messages\nsafe from hacker attacks.";
 
 "Tour.Title5" = "Cloud-Based";
-"Tour.Text5" = "**Swiftgram** lets you access your\nmessages from multiple devices.";
+"Tour.Text5" = "**Symonagram** lets you access your\nmessages from multiple devices.";
 
 "Tour.Title6" = "Free";
-"Tour.Text6" = "**Swiftgram** provides free unlimited\ncloud storage for chats and media.";
+"Tour.Text6" = "**Symonagram** provides free unlimited\ncloud storage for chats and media.";
 
 "Tour.StartButton" = "Start Messaging";
 

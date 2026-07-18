@@ -4461,9 +4461,8 @@ func settingsSearchableItems(
         let dataItems = dataSearchableItems(context: context)
         allItems.append(contentsOf: dataItems)
         
-        let proxyItems = proxySearchableItems(context: context, servers: proxyServers)
-        allItems.append(contentsOf: proxyItems)
-        
+        // MARK: Symonagram — proxy removed from the client, so it is not searchable.
+
         let appearanceItems = appearanceSearchableItems(context: context)
         allItems.append(contentsOf: appearanceItems)
         

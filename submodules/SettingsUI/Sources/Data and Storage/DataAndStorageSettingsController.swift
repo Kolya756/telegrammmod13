@@ -644,20 +644,7 @@ private func dataAndStorageControllerEntries(context: AccountContext, state: Dat
         entries.append(.sensitiveContentInfo(presentationData.strings.Settings_SensitiveContentInfo))
     }
     
-    let proxyValue: String
-    if let proxySettings = data.proxySettings, let activeServer = proxySettings.activeServer, proxySettings.enabled {
-        switch activeServer.connection {
-            case .socks5:
-                proxyValue = presentationData.strings.ChatSettings_ConnectionType_UseSocks5
-            case .mtp:
-                proxyValue = presentationData.strings.SocksProxySetup_ProxyTelegram
-        }
-    } else {
-        proxyValue = presentationData.strings.GroupInfo_SharedMediaNone
-    }
-    entries.append(.connectionHeader(presentationData.theme, presentationData.strings.ChatSettings_ConnectionType_Title.uppercased()))
-    entries.append(.connectionProxy(presentationData.theme, presentationData.strings.SocksProxySetup_Title, proxyValue))
-        
+    // MARK: Symonagram — proxy fully removed from the client, so no Connection/Proxy row here.
     return entries
 }
 
