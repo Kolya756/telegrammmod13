@@ -221,7 +221,8 @@ func settingsItems(showProfileId: Bool, data: PeerInfoScreenData?, context: Acco
     
     
     // MARK: Symonagram — single entry row; "Pro" is folded inside under the "Основные" category.
-    let _ = context.currentAppConfiguration.with({ $0 }).sgWebSettings
+    let sgWebSettings = context.currentAppConfiguration.with({ $0 }).sgWebSettings
+    let _ = sgWebSettings
     let _ = swiftgramProLabel
     items[.swiftgram]!.append(PeerInfoScreenDisclosureItem(id: 1, label: swiftgramLabel, text: "Symonagram", icon: PresentationResourcesSettings.swiftgram, action: {
         interaction.openSettings(.swiftgram)
