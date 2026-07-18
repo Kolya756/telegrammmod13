@@ -180,6 +180,10 @@ public class SGSimpleSettings {
         case ghostReadReceipts
         case ghostTyping
         case ghostOnline
+        // MARK: Symonagram — save features
+        case saveDeletedMessages
+        case saveDeletedRetentionDays
+        case saveSelfDestructMedia
     }
     
     public enum DownloadSpeedBoostValues: String, CaseIterable {
@@ -336,7 +340,11 @@ public class SGSimpleSettings {
         // MARK: Symonagram — Ghost mode defaults (all OFF, user opts in)
         Keys.ghostReadReceipts.rawValue: false,
         Keys.ghostTyping.rawValue: false,
-        Keys.ghostOnline.rawValue: false
+        Keys.ghostOnline.rawValue: false,
+        // MARK: Symonagram — save features
+        Keys.saveDeletedMessages.rawValue: false,
+        Keys.saveDeletedRetentionDays.rawValue: Int32(30),
+        Keys.saveSelfDestructMedia.rawValue: false
     ]
     
     public static let groupDefaultValues: [String: Any] = [
@@ -574,6 +582,16 @@ public class SGSimpleSettings {
 
     @UserDefault(key: Keys.ghostOnline.rawValue)
     public var ghostOnline: Bool
+
+    // MARK: Symonagram — save features
+    @UserDefault(key: Keys.saveDeletedMessages.rawValue)
+    public var saveDeletedMessages: Bool
+
+    @UserDefault(key: Keys.saveDeletedRetentionDays.rawValue)
+    public var saveDeletedRetentionDays: Int32
+
+    @UserDefault(key: Keys.saveSelfDestructMedia.rawValue)
+    public var saveSelfDestructMedia: Bool
     
     @UserDefault(key: Keys.pinnedMessageNotifications.rawValue, userDefaults: UserDefaults(suiteName: APP_GROUP_IDENTIFIER) ?? .standard)
     public var pinnedMessageNotifications: String
