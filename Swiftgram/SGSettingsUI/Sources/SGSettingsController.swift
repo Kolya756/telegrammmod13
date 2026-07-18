@@ -53,6 +53,7 @@ private enum SGControllerSection: Int32, SGItemListSection {
     case accountColors
     case other
     case ghost // MARK: Symonagram
+    case savedMessages // MARK: Symonagram
 }
 
 private enum SGBoolSetting: String {
@@ -120,6 +121,9 @@ private enum SGBoolSetting: String {
     case ghostReadReceipts
     case ghostTyping
     case ghostOnline
+    // MARK: Symonagram — Saved messages
+    case saveDeletedMessages
+    case saveSelfDestructMedia
 }
 
 private enum SGOneFromManySetting: String {
@@ -183,6 +187,10 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
         entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostTyping, value: SGSimpleSettings.shared.ghostTyping, text: i18n("Settings.Ghost.Typing", lang), enabled: true))
         entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostOnline, value: SGSimpleSettings.shared.ghostOnline, text: i18n("Settings.Ghost.Online", lang), enabled: true))
         entries.append(.notice(id: id.count, section: .ghost, text: i18n("Settings.Ghost.Notice", lang)))
+        // MARK: Symonagram — Saved messages
+        entries.append(.header(id: id.count, section: .savedMessages, text: "СОХРАНЕНИЕ", badge: nil))
+        entries.append(.toggle(id: id.count, section: .savedMessages, settingName: .saveDeletedMessages, value: SGSimpleSettings.shared.saveDeletedMessages, text: "Сохранять удалённые сообщения", enabled: true))
+        entries.append(.notice(id: id.count, section: .savedMessages, text: "Удалённые собеседником сообщения (текст, голосовые, видео, фото) не исчезают, а остаются в чате — полупрозрачными и с меткой 🗑."))
         return filterSGItemListUIEntrires(entries: entries, by: state.searchQuery)
     }
 
@@ -495,6 +503,11 @@ public func sgSettingsController(context: AccountContext, mode: SGSettingsMode =
             SGSimpleSettings.shared.ghostTyping = value
         case .ghostOnline:
             SGSimpleSettings.shared.ghostOnline = value
+        // MARK: Symonagram — Saved messages
+        case .saveDeletedMessages:
+            SGSimpleSettings.shared.saveDeletedMessages = value
+        case .saveSelfDestructMedia:
+            SGSimpleSettings.shared.saveSelfDestructMedia = value
         }
     }, updateSliderValue: { setting, value in
         switch (setting) {

@@ -414,6 +414,7 @@ public class ChatMessageMediaBubbleContentNode: ChatMessageBubbleContentNode {
                 ChatMessageDateAndStatus(
                     type: statusType,
                     edited: edited,
+                    sgDeleted: item.message.sgIsDeleted,
                     viewCount: viewCount,
                     dateReactions: dateReactionsAndPeers.reactions,
                     dateReactionPeers: dateReactionsAndPeers.peers,

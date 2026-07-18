@@ -3901,7 +3901,9 @@ public class ChatMessageBubbleItemNode: ChatMessageItemView, ChatMessagePreviewI
         strongSelf.mainContextSourceNode.frame = CGRect(origin: CGPoint(), size: layout.contentSize)
         strongSelf.mainContextSourceNode.contentNode.frame = CGRect(origin: CGPoint(), size: layout.contentSize)
         strongSelf.contentContainersWrapperNode.frame = CGRect(origin: CGPoint(), size: layout.contentSize)
-        
+        // Symonagram — dim messages that were deleted on the server but kept locally.
+        strongSelf.contentContainersWrapperNode.alpha = item.message.sgIsDeleted ? 0.55 : 1.0
+
         strongSelf.appliedItem = item
         strongSelf.appliedForwardInfo = (forwardSource, forwardAuthorSignature)
         strongSelf.updateAccessibilityData(accessibilityData)
