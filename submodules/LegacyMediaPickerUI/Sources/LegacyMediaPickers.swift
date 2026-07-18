@@ -406,7 +406,7 @@ public func legacyAssetPickerEnqueueMessages(
                                     var randomId: Int64 = 0
                                     arc4random_buf(&randomId, 8)
                                     let tempFilePath = NSTemporaryDirectory() + "\(randomId).jpeg"
-                                    let maxSize = item.forceHd ? CGSize(width: 2560.0, height: 2560.0) : CGSize(width: 1280.0, height: 1280.0)
+                                    let maxSize = item.forceHd ? CGSize(width: 4096.0, height: 4096.0) : CGSize(width: 1280.0, height: 1280.0)
                                     let scaledSize = image.size.aspectFittedOrSmaller(maxSize)
                                 
                                     if let scaledImage = TGScaleImageToPixelSize(image, scaledSize) {

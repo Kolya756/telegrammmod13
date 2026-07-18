@@ -731,6 +731,8 @@ public class ChatMessageTextBubbleContentNode: ChatMessageBubbleContentNode {
                         presentationData: item.presentationData,
                         edited: edited && !item.presentationData.isPreview,
                         sgDeleted: item.message.sgIsDeleted && !item.presentationData.isPreview,
+                        sgSelfDestruct: item.message.sgDeletedAttribute?.isSelfDestruct ?? false,
+                        sgDeletionTimestamp: item.message.sgDeletedAttribute?.deletionTimestamp,
                         impressionCount: !item.presentationData.isPreview ? viewCount : nil,
                         dateText: dateText,
                         type: statusType,

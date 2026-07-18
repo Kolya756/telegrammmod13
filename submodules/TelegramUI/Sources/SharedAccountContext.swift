@@ -4618,6 +4618,10 @@ extension SharedAccountContextImpl {
         return controller
     }
 
+    public func makeThemeSettingsController(context: AccountContext) -> ViewController {
+        return themeSettingsController(context: context)
+    }
+
     public func makeSGPayWallController(context: AccountContext) -> ViewController? {
         guard #available(iOS 13.0, *) else {
             return nil

@@ -955,6 +955,8 @@ public final class ChatMessageInteractiveFileNode: ASDisplayNode {
                         presentationData: arguments.presentationData,
                         edited: edited && !arguments.presentationData.isPreview,
                         sgDeleted: arguments.message.sgIsDeleted && !arguments.presentationData.isPreview,
+                        sgSelfDestruct: arguments.message.sgDeletedAttribute?.isSelfDestruct ?? false,
+                        sgDeletionTimestamp: arguments.message.sgDeletedAttribute?.deletionTimestamp,
                         impressionCount: !arguments.presentationData.isPreview ? viewCount : nil,
                         dateText: dateText,
                         type: statusType,

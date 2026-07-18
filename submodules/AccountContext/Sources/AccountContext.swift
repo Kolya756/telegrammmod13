@@ -1365,6 +1365,7 @@ public protocol SharedAccountContext: AnyObject {
     var immediateSGStatus: SGStatus { get }
     var SGIAP: SGIAPManager? { get }
     func makeSGProController(context: AccountContext) -> ViewController
+    func makeThemeSettingsController(context: AccountContext) -> ViewController
     func makeSGPayWallController(context: AccountContext) -> ViewController?
     func makeSGUpdateIOSController() -> ViewController
 

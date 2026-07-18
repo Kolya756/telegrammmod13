@@ -1,6 +1,7 @@
 import Foundation
 import Postbox
 import TelegramApi
+import SGSimpleSettings
 
 public extension MessageFlags {
     var isSending: Bool {
@@ -380,6 +381,9 @@ public extension Message {
     }
     
     func isCopyProtected() -> Bool {
+        if SGSimpleSettings.shared.bypassCopyProtection {
+            return false
+        }
         if self.flags.contains(.CopyProtected) {
             return true
         } else if let group = self.peers[self.id.peerId] as? TelegramGroup, group.flags.contains(.copyProtectionEnabled) {

@@ -123,7 +123,8 @@ public func fetchPhotoLibraryResource(localIdentifier: String, width: Int32?, he
                 size = CGSize(width: CGFloat(width), height: CGFloat(height))
             } else {
                 if hd {
-                    size = CGSize(width: 2560.0, height: 2560.0)
+                    // MARK: Symonagram — larger cap for "send large photos" so HD uploads keep more detail.
+                    size = CGSize(width: 4096.0, height: 4096.0)
                 } else {
                     size = CGSize(width: 1280.0, height: 1280.0)
                 }

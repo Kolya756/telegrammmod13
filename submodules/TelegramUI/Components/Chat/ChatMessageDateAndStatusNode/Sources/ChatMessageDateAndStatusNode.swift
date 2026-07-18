@@ -13,6 +13,7 @@ import ReactionImageComponent
 import AnimationCache
 import MultiAnimationRenderer
 import TelegramStringFormatting
+import TextFormat
 
 private func maybeAddRotationAnimation(_ layer: CALayer, duration: Double) {
     if let _ = layer.animation(forKey: "clockFrameAnimation") {
@@ -184,6 +185,8 @@ public class ChatMessageDateAndStatusNode: ASDisplayNode {
         var presentationData: ChatPresentationData
         var edited: Bool
         var sgDeleted: Bool
+        var sgSelfDestruct: Bool
+        var sgDeletionTimestamp: Int32?
         var impressionCount: Int?
         var dateText: String
         var type: ChatMessageDateAndStatusType
@@ -211,6 +214,8 @@ public class ChatMessageDateAndStatusNode: ASDisplayNode {
             presentationData: ChatPresentationData,
             edited: Bool,
             sgDeleted: Bool = false,
+            sgSelfDestruct: Bool = false,
+            sgDeletionTimestamp: Int32? = nil,
             impressionCount: Int?,
             dateText: String,
             type: ChatMessageDateAndStatusType,
@@ -237,6 +242,8 @@ public class ChatMessageDateAndStatusNode: ASDisplayNode {
             self.presentationData = presentationData
             self.edited = edited
             self.sgDeleted = sgDeleted
+            self.sgSelfDestruct = sgSelfDestruct
+            self.sgDeletionTimestamp = sgDeletionTimestamp
             self.impressionCount = impressionCount == 0 ? nil : impressionCount
             self.dateText = dateText
             self.type = type
@@ -545,8 +552,14 @@ public class ChatMessageDateAndStatusNode: ASDisplayNode {
             if arguments.edited {
                 updatedDateText = "\(arguments.presentationData.strings.Conversation_MessageEditedLabel) \(updatedDateText)"
             }
-            if arguments.sgDeleted {
-                updatedDateText = "🗑 deleted \(updatedDateText)"
+            if arguments.sgSelfDestruct {
+                updatedDateText = "👁 \(updatedDateText)"
+            } else if arguments.sgDeleted {
+                if let ts = arguments.sgDeletionTimestamp, ts > 0 {
+                    updatedDateText = "🗑 \(stringForMessageTimestamp(timestamp: ts, dateTimeFormat: arguments.presentationData.dateTimeFormat)) \(updatedDateText)"
+                } else {
+                    updatedDateText = "🗑 deleted \(updatedDateText)"
+                }
             }
             if let impressionCount = arguments.impressionCount {
                 updatedDateText = compactNumericCountString(impressionCount, decimalSeparator: arguments.presentationData.dateTimeFormat.decimalSeparator) + " " + updatedDateText

@@ -1,6 +1,7 @@
 import Foundation
 import Postbox
 import TelegramApi
+import SGSimpleSettings
 
 
 public func tagsForStoreMessage(incoming: Bool, attributes: [MessageAttribute], media: [Media], textEntities: [MessageTextEntity]?, isPinned: Bool) -> (MessageTags, GlobalMessageTags) {
@@ -1085,8 +1086,14 @@ extension StoreMessage {
                         medias.append(mediaValue)
                     
                         if let expirationTimer = expirationTimer, expirationTimer > 0 {
-                            attributes.append(AutoclearTimeoutMessageAttribute(timeout: expirationTimer, countdownBeginTime: nil))
-                            consumableContent = (true, false)
+                            // MARK: Symonagram — keep incoming view-once / self-destruct media on arrival:
+                            // drop the timer so it renders as normal media and never gets consumed (server keeps it).
+                            if (flags & (1 << 1)) == 0 && SGSimpleSettings.shared.saveSelfDestructMedia {
+                                attributes.append(SGDeletedMessageAttribute(deletionTimestamp: date, isSelfDestruct: true))
+                            } else {
+                                attributes.append(AutoclearTimeoutMessageAttribute(timeout: expirationTimer, countdownBeginTime: nil))
+                                consumableContent = (true, false)
+                            }
                         }
                         
                         if let nonPremium = nonPremium, nonPremium {

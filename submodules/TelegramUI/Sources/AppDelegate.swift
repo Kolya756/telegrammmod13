@@ -994,8 +994,26 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             self.window?.rootViewController?.dismiss(animated: true, completion: nil)
         }, getAvailableAlternateIcons: {
             if #available(iOS 10.3, *) {
-                // MARK: Symonagram — alt icons not bundled; hide the App Icon picker
-                return []
+                // MARK: Symonagram — bundled SG alt icons (see Telegram/BUILD alternate_icons)
+                let icons: [PresentationAppIcon] = [
+                    PresentationAppIcon(name: "SGDefault", imageName: "SGDefault", isDefault: true),
+                    PresentationAppIcon(name: "SGBlack", imageName: "SGBlack"),
+                    PresentationAppIcon(name: "SGLegacy", imageName: "SGLegacy"),
+                    PresentationAppIcon(name: "SGInverted", imageName: "SGInverted"),
+                    PresentationAppIcon(name: "SGWhite", imageName: "SGWhite"),
+                    PresentationAppIcon(name: "SGNight", imageName: "SGNight"),
+                    PresentationAppIcon(name: "SGSky", imageName: "SGSky"),
+                    PresentationAppIcon(name: "SGTitanium", imageName: "SGTitanium"),
+                    PresentationAppIcon(name: "SGNeon", imageName: "SGNeon"),
+                    PresentationAppIcon(name: "SGNeonBlue", imageName: "SGNeonBlue"),
+                    PresentationAppIcon(name: "SGGlass", imageName: "SGGlass"),
+                    PresentationAppIcon(name: "SGSparkling", imageName: "SGSparkling"),
+                    PresentationAppIcon(name: "SGPro", imageName: "SGPro"),
+                    PresentationAppIcon(name: "SGDay", imageName: "SGDay"),
+                    PresentationAppIcon(name: "SGGold", imageName: "SGGold"),
+                    PresentationAppIcon(name: "SGDucky", imageName: "SGDucky"),
+                ]
+                return icons
             } else {
                 return []
             }

@@ -54,6 +54,8 @@ private enum SGControllerSection: Int32, SGItemListSection {
     case other
     case ghost // MARK: Symonagram
     case savedMessages // MARK: Symonagram
+    case symonaTools // MARK: Symonagram
+    case symonaAppearanceSection // MARK: Symonagram
 }
 
 private enum SGBoolSetting: String {
@@ -124,6 +126,7 @@ private enum SGBoolSetting: String {
     // MARK: Symonagram — Saved messages
     case saveDeletedMessages
     case saveSelfDestructMedia
+    case bypassCopyProtection
 }
 
 private enum SGOneFromManySetting: String {
@@ -148,6 +151,7 @@ private enum SGDisclosureLink: String {
     case symonaGeneral // MARK: Symonagram
     case symonaFeatures // MARK: Symonagram
     case symonaPro // MARK: Symonagram
+    case symonaAppearance // MARK: Symonagram
 }
 
 private struct PeerNameColorScreenState: Equatable {
@@ -191,7 +195,15 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
         entries.append(.header(id: id.count, section: .savedMessages, text: "СОХРАНЕНИЕ", badge: nil))
         entries.append(.toggle(id: id.count, section: .savedMessages, settingName: .saveDeletedMessages, value: SGSimpleSettings.shared.saveDeletedMessages, text: "Сохранять удалённые сообщения", enabled: true))
         entries.append(.toggle(id: id.count, section: .savedMessages, settingName: .saveSelfDestructMedia, value: SGSimpleSettings.shared.saveSelfDestructMedia, text: "Сохранять сгорающие медиа", enabled: true))
-        entries.append(.notice(id: id.count, section: .savedMessages, text: "Удалённые собеседником сообщения (текст, голосовые, видео, фото) не исчезают, а остаются в чате — полупрозрачными и с меткой 🗑.\n\nСгорающие и «просмотр один раз» фото/видео/голосовые/видеосообщения сохраняются после просмотра."))
+        entries.append(.notice(id: id.count, section: .savedMessages, text: "Удалённые собеседником сообщения (текст, голосовые, видео, фото) не исчезают, а остаются в чате — полупрозрачными и с меткой 🗑.\n\nСгорающие и «просмотр один раз» фото/видео/голосовые/видеосообщения сохраняются сразу при получении и показываются как обычные (метка 👁)."))
+        // MARK: Symonagram — Tools
+        entries.append(.header(id: id.count, section: .symonaTools, text: "ЗАЩИЩЁННЫЙ КОНТЕНТ", badge: nil))
+        entries.append(.toggle(id: id.count, section: .symonaTools, settingName: .bypassCopyProtection, value: SGSimpleSettings.shared.bypassCopyProtection, text: "Обход запрета сохранения", enabled: true))
+        entries.append(.notice(id: id.count, section: .symonaTools, text: "Разрешает сохранять, копировать и делать скриншоты в чатах и каналах, где владелец включил «Запретить сохранение контента». Внутренняя пересылка таких сообщений всё равно блокируется сервером — сохрани и отправь заново."))
+        // MARK: Symonagram — Appearance shortcut
+        entries.append(.header(id: id.count, section: .symonaAppearanceSection, text: "ОФОРМЛЕНИЕ", badge: nil))
+        entries.append(.disclosure(id: id.count, section: .symonaAppearanceSection, link: .symonaAppearance, text: "Цвета и темы"))
+        entries.append(.notice(id: id.count, section: .symonaAppearanceSection, text: "Акцентный цвет, тёмная/светлая тема, обои и размер текста."))
         return filterSGItemListUIEntrires(entries: entries, by: state.searchQuery)
     }
 
@@ -509,6 +521,8 @@ public func sgSettingsController(context: AccountContext, mode: SGSettingsMode =
             SGSimpleSettings.shared.saveDeletedMessages = value
         case .saveSelfDestructMedia:
             SGSimpleSettings.shared.saveSelfDestructMedia = value
+        case .bypassCopyProtection:
+            SGSimpleSettings.shared.bypassCopyProtection = value
         }
     }, updateSliderValue: { setting, value in
         switch (setting) {
@@ -686,6 +700,8 @@ public func sgSettingsController(context: AccountContext, mode: SGSettingsMode =
                 pushControllerImpl?(sgSettingsController(context: context, mode: .symona))
             case .symonaPro:
                 pushControllerImpl?(context.sharedContext.makeSGProController(context: context))
+            case .symonaAppearance:
+                pushControllerImpl?(context.sharedContext.makeThemeSettingsController(context: context))
         }
     }, searchInput: { searchQuery in
         updateState { state in

@@ -184,6 +184,7 @@ public class SGSimpleSettings {
         case saveDeletedMessages
         case saveDeletedRetentionDays
         case saveSelfDestructMedia
+        case bypassCopyProtection
     }
     
     public enum DownloadSpeedBoostValues: String, CaseIterable {
@@ -344,7 +345,8 @@ public class SGSimpleSettings {
         // MARK: Symonagram — save features
         Keys.saveDeletedMessages.rawValue: false,
         Keys.saveDeletedRetentionDays.rawValue: Int32(30),
-        Keys.saveSelfDestructMedia.rawValue: false
+        Keys.saveSelfDestructMedia.rawValue: false,
+        Keys.bypassCopyProtection.rawValue: false
     ]
     
     public static let groupDefaultValues: [String: Any] = [
@@ -592,6 +594,9 @@ public class SGSimpleSettings {
 
     @UserDefault(key: Keys.saveSelfDestructMedia.rawValue)
     public var saveSelfDestructMedia: Bool
+
+    @UserDefault(key: Keys.bypassCopyProtection.rawValue)
+    public var bypassCopyProtection: Bool
     
     @UserDefault(key: Keys.pinnedMessageNotifications.rawValue, userDefaults: UserDefaults(suiteName: APP_GROUP_IDENTIFIER) ?? .standard)
     public var pinnedMessageNotifications: String

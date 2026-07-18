@@ -266,7 +266,7 @@ func markMessageContentAsConsumedRemotely(transaction: Transaction, messageId: M
             // Drop the self-destruct timers so the kept media renders as normal media.
             updatedAttributes = updatedAttributes.filter { !($0 is AutoremoveTimeoutMessageAttribute) && !($0 is AutoclearTimeoutMessageAttribute) }
             if !updatedAttributes.contains(where: { $0 is SGDeletedMessageAttribute }) {
-                updatedAttributes.append(SGDeletedMessageAttribute(deletionTimestamp: timestamp))
+                updatedAttributes.append(SGDeletedMessageAttribute(deletionTimestamp: timestamp, isSelfDestruct: true))
             }
             updateMessage = true
         }

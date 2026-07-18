@@ -116,7 +116,7 @@ func managedAutoremoveMessageOperations(network: Network, postbox: Postbox, isRe
                                     }
                                 }
                                 if sgSaveMedia && !updatedAttributes.contains(where: { $0 is SGDeletedMessageAttribute }) {
-                                    updatedAttributes.append(SGDeletedMessageAttribute(deletionTimestamp: Int32(CFAbsoluteTimeGetCurrent() + NSTimeIntervalSince1970)))
+                                    updatedAttributes.append(SGDeletedMessageAttribute(deletionTimestamp: Int32(CFAbsoluteTimeGetCurrent() + NSTimeIntervalSince1970), isSelfDestruct: true))
                                 }
                                 return .update(StoreMessage(id: currentMessage.id, customStableId: nil, globallyUniqueId: currentMessage.globallyUniqueId, groupingKey: currentMessage.groupingKey, threadId: currentMessage.threadId, timestamp: currentMessage.timestamp, flags: StoreMessageFlags(currentMessage.flags), tags: currentMessage.tags, globalTags: currentMessage.globalTags, localTags: currentMessage.localTags, forwardInfo: storeForwardInfo, authorId: currentMessage.author?.id, text: currentMessage.text, attributes: updatedAttributes, media: updatedMedia))
                             })

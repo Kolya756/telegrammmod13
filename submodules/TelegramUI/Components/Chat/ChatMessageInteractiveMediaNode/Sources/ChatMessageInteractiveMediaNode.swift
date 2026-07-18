@@ -1134,6 +1134,8 @@ public final class ChatMessageInteractiveMediaNode: ASDisplayNode, GalleryItemTr
                     presentationData: presentationData,
                     edited: dateAndStatus.edited && !presentationData.isPreview,
                     sgDeleted: dateAndStatus.sgDeleted && !presentationData.isPreview,
+                    sgSelfDestruct: message.sgDeletedAttribute?.isSelfDestruct ?? false,
+                    sgDeletionTimestamp: message.sgDeletedAttribute?.deletionTimestamp,
                     impressionCount: !presentationData.isPreview ? dateAndStatus.viewCount : nil,
                     dateText: dateAndStatus.dateText,
                     type: dateAndStatus.type,
