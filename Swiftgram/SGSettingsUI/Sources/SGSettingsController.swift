@@ -190,7 +190,8 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
         // MARK: Symonagram — Saved messages
         entries.append(.header(id: id.count, section: .savedMessages, text: "СОХРАНЕНИЕ", badge: nil))
         entries.append(.toggle(id: id.count, section: .savedMessages, settingName: .saveDeletedMessages, value: SGSimpleSettings.shared.saveDeletedMessages, text: "Сохранять удалённые сообщения", enabled: true))
-        entries.append(.notice(id: id.count, section: .savedMessages, text: "Удалённые собеседником сообщения (текст, голосовые, видео, фото) не исчезают, а остаются в чате — полупрозрачными и с меткой 🗑."))
+        entries.append(.toggle(id: id.count, section: .savedMessages, settingName: .saveSelfDestructMedia, value: SGSimpleSettings.shared.saveSelfDestructMedia, text: "Сохранять сгорающие медиа", enabled: true))
+        entries.append(.notice(id: id.count, section: .savedMessages, text: "Удалённые собеседником сообщения (текст, голосовые, видео, фото) не исчезают, а остаются в чате — полупрозрачными и с меткой 🗑.\n\nСгорающие и «просмотр один раз» фото/видео/голосовые/видеосообщения сохраняются после просмотра."))
         return filterSGItemListUIEntrires(entries: entries, by: state.searchQuery)
     }
 

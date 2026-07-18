@@ -2,6 +2,7 @@ import Foundation
 import Postbox
 import TelegramApi
 import SwiftSignalKit
+import SGSimpleSettings
 
 func _internal_markMessageContentAsConsumedInteractively(postbox: Postbox, messageId: MessageId) -> Signal<Void, NoError> {
     return postbox.transaction { transaction -> Void in
@@ -198,16 +199,23 @@ func markMessageContentAsConsumedRemotely(transaction: Transaction, messageId: M
         
         let timestamp = Int32(CFAbsoluteTimeGetCurrent() + NSTimeIntervalSince1970)
         let countdownBeginTime = consumeDate ?? timestamp
-        
+
+        // MARK: Symonagram — when enabled, keep self-destruct / view-once media instead of expiring it.
+        let sgSaveMedia = SGSimpleSettings.shared.saveSelfDestructMedia
+        var sgKeptMedia = false
+
         for i in 0 ..< updatedAttributes.count {
             if let attribute = updatedAttributes[i] as? AutoremoveTimeoutMessageAttribute {
                 if (attribute.countdownBeginTime == nil || attribute.countdownBeginTime == 0) && message.containsSecretMedia {
                     updatedAttributes[i] = AutoremoveTimeoutMessageAttribute(timeout: attribute.timeout, countdownBeginTime: countdownBeginTime)
                     updateMessage = true
-                                 
+
                     if message.id.peerId.namespace == Namespaces.Peer.SecretChat {
                     } else {
                         if attribute.timeout == viewOnceTimeout || timestamp >= countdownBeginTime + attribute.timeout {
+                            if sgSaveMedia {
+                                sgKeptMedia = true
+                            } else {
                             for i in 0 ..< updatedMedia.count {
                                 if let _ = updatedMedia[i] as? TelegramMediaImage {
                                     updatedMedia[i] = TelegramMediaExpiredContent(data: .image)
@@ -221,6 +229,7 @@ func markMessageContentAsConsumedRemotely(transaction: Transaction, messageId: M
                                     }
                                 }
                             }
+                            }
                         }
                     }
                 }
@@ -228,12 +237,14 @@ func markMessageContentAsConsumedRemotely(transaction: Transaction, messageId: M
                 if (attribute.countdownBeginTime == nil || attribute.countdownBeginTime == 0) && message.containsSecretMedia {
                     updatedAttributes[i] = AutoclearTimeoutMessageAttribute(timeout: attribute.timeout, countdownBeginTime: countdownBeginTime)
                     updateMessage = true
-                    
+
                     if message.id.peerId.namespace == Namespaces.Peer.SecretChat {
                     } else {
                         for i in 0 ..< updatedMedia.count {
                             if attribute.timeout == viewOnceTimeout || timestamp >= countdownBeginTime + attribute.timeout {
-                                if let _ = updatedMedia[i] as? TelegramMediaImage {
+                                if sgSaveMedia {
+                                    sgKeptMedia = true
+                                } else if let _ = updatedMedia[i] as? TelegramMediaImage {
                                     updatedMedia[i] = TelegramMediaExpiredContent(data: .image)
                                 } else if let file = updatedMedia[i] as? TelegramMediaFile {
                                     if file.isInstantVideo {
@@ -250,7 +261,16 @@ func markMessageContentAsConsumedRemotely(transaction: Transaction, messageId: M
                 }
             }
         }
-        
+
+        if sgKeptMedia {
+            // Drop the self-destruct timers so the kept media renders as normal media.
+            updatedAttributes = updatedAttributes.filter { !($0 is AutoremoveTimeoutMessageAttribute) && !($0 is AutoclearTimeoutMessageAttribute) }
+            if !updatedAttributes.contains(where: { $0 is SGDeletedMessageAttribute }) {
+                updatedAttributes.append(SGDeletedMessageAttribute(deletionTimestamp: timestamp))
+            }
+            updateMessage = true
+        }
+
         if updateMessage {
             transaction.updateMessage(message.id, update: { currentMessage in
                 var storeForwardInfo: StoreMessageForwardInfo?
