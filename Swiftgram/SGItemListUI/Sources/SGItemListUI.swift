@@ -89,7 +89,8 @@ public enum SGItemListUIEntry<Section: SGItemListSection, BoolSetting: Hashable,
     case peerColorDisclosurePreview(id: Int, section: Section, name: String, color: UIColor)
     case action(id: Int, section: Section, actionType: ActionType, text: String, kind: ItemListActionKind)
     case searchInput(id: Int, section: Section, title: NSAttributedString, text: String, placeholder: String)
-    
+    case appHeader(id: Int, section: Section, iconName: String, title: String, version: String) // MARK: Symonagram
+
     public var section: ItemListSectionId {
         switch self {
         case let .header(_, sectionId, _, _):
@@ -115,9 +116,11 @@ public enum SGItemListUIEntry<Section: SGItemListSection, BoolSetting: Hashable,
             
         case let .searchInput(_, sectionId, _, _, _):
             return sectionId.rawValue
+        case let .appHeader(_, sectionId, _, _, _):
+            return sectionId.rawValue
         }
     }
-    
+
     public var stableId: Int {
         switch self {
         case let .header(stableIdValue, _, _, _):
@@ -137,6 +140,8 @@ public enum SGItemListUIEntry<Section: SGItemListSection, BoolSetting: Hashable,
         case let .action(stableIdValue, _, _, _, _):
             return stableIdValue
         case let .searchInput(stableIdValue, _, _, _, _):
+            return stableIdValue
+        case let .appHeader(stableIdValue, _, _, _, _):
             return stableIdValue
         }
     }
@@ -172,6 +177,9 @@ public enum SGItemListUIEntry<Section: SGItemListSection, BoolSetting: Hashable,
             
         case let (.searchInput(id1, lhsValue1, lhsValue2, lhsValue3, lhsValue4), .searchInput(id2, rhsValue1, rhsValue2, rhsValue3, rhsValue4)):
             return id1 == id2 && lhsValue1 == rhsValue1 && lhsValue2 == rhsValue2 && lhsValue3 == rhsValue3 && lhsValue4 == rhsValue4
+
+        case let (.appHeader(id1, section1, iconName1, title1, version1), .appHeader(id2, section2, iconName2, title2, version2)):
+            return id1 == id2 && section1 == section2 && iconName1 == iconName2 && title1 == title2 && version1 == version2
 
         default:
             return false
@@ -223,6 +231,8 @@ public enum SGItemListUIEntry<Section: SGItemListSection, BoolSetting: Hashable,
             })
         case let .searchInput(_, _, title, text, placeholder):
             return ItemListSingleLineInputItem(presentationData: presentationData, systemStyle: .glass, title: title, text: text, placeholder: placeholder, returnKeyType: .done, spacing: 3.0, clearType: .always, selectAllOnFocus: true, secondaryStyle: true, sectionId: self.section, textUpdated: { input in arguments.searchInput(input) }, action: {}, dismissKeyboardOnEnter: true)
+        case let .appHeader(_, _, iconName, title, version):
+            return SGAppIconHeaderItem(theme: presentationData.theme, iconName: iconName, title: title, version: version, sectionId: self.section)
         }
     }
 }
@@ -261,6 +271,8 @@ public func filterSGItemListUIEntrires<Section: SGItemListSection & Hashable, Bo
             return text.lowercased().contains(query)
         case .searchInput:
             return true // Never hiding search input
+        case .appHeader:
+            return false // Never indexed during search
         }
     }
     

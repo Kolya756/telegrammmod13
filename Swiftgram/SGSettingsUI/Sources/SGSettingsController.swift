@@ -168,7 +168,8 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
 
     // MARK: Symonagram — root screen: app header + Categories
     if mode == .root {
-        entries.append(.notice(id: id.count, section: .appInfo, text: "**Symonagram** v1.0.0\nФорк Telegram iOS с расширенным функционалом"))
+        entries.append(.appHeader(id: id.count, section: .appInfo, iconName: "SymonagramLogo", title: "Symonagram", version: "v1.0.0"))
+        entries.append(.notice(id: id.count, section: .appInfo, text: "Форк Telegram iOS с расширенным функционалом"))
         entries.append(.header(id: id.count, section: .categories, text: i18n("Settings.Categories.Header", lang), badge: nil))
         entries.append(.disclosure(id: id.count, section: .categories, link: .symonaGeneral, text: i18n("Settings.Categories.General", lang)))
         entries.append(.disclosure(id: id.count, section: .categories, link: .symonaFeatures, text: "Symonagram"))
