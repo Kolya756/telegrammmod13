@@ -279,6 +279,8 @@
 "Settings.NY.Notice" = "Available for a limited time only!";
 
 // MARK: Symonagram — Ghost mode
+"Settings.Categories.Header" = "CATEGORIES";
+"Settings.Categories.General" = "General";
 "Settings.Ghost.Header" = "GHOST MODE";
 "Settings.Ghost.ReadReceipts" = "Don't mark messages as read";
 "Settings.Ghost.Typing" = "Don't show 'typing' status";

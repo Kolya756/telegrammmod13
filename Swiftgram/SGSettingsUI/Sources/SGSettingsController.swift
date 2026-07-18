@@ -25,8 +25,17 @@ import PeerNameColorScreen
 import UndoUI
 
 
+// MARK: Symonagram — single-tab restructure
+public enum SGSettingsMode {
+    case root      // parent: app header + Categories (Основные / Symonagram)
+    case general   // "Основные" — all non-Symonagram settings (+ Pro)
+    case symona    // "Symonagram" — our own features
+}
+
 private enum SGControllerSection: Int32, SGItemListSection {
     case search
+    case appInfo // MARK: Symonagram
+    case categories // MARK: Symonagram
     case trending
     case content
     case tabs
@@ -132,6 +141,9 @@ private enum SGSliderSetting: String {
 private enum SGDisclosureLink: String {
     case contentSettings
     case languageSettings
+    case symonaGeneral // MARK: Symonagram
+    case symonaFeatures // MARK: Symonagram
+    case symonaPro // MARK: Symonagram
 }
 
 private struct PeerNameColorScreenState: Equatable {
@@ -145,15 +157,36 @@ private struct SGSettingsControllerState: Equatable {
 
 private typealias SGControllerEntry = SGItemListUIEntry<SGControllerSection, SGBoolSetting, SGSliderSetting, SGOneFromManySetting, SGDisclosureLink, AnyHashable>
 
-private func SGControllerEntries(presentationData: PresentationData, callListSettings: CallListSettings, experimentalUISettings: ExperimentalUISettings, appConfiguration: AppConfiguration, nameColors: PeerNameColors, state: SGSettingsControllerState) -> [SGControllerEntry] {
-    
+private func SGControllerEntries(presentationData: PresentationData, callListSettings: CallListSettings, experimentalUISettings: ExperimentalUISettings, appConfiguration: AppConfiguration, nameColors: PeerNameColors, state: SGSettingsControllerState, mode: SGSettingsMode) -> [SGControllerEntry] {
+
     let lang = presentationData.strings.baseLanguageCode
     let strings = presentationData.strings
     let newStr = strings.Settings_New
     var entries: [SGControllerEntry] = []
-    
+
     let id = SGItemListCounter()
-    
+
+    // MARK: Symonagram — root screen: app header + Categories
+    if mode == .root {
+        entries.append(.notice(id: id.count, section: .appInfo, text: "**Symonagram** v1.0.0\nФорк Telegram iOS с расширенным функционалом"))
+        entries.append(.header(id: id.count, section: .categories, text: i18n("Settings.Categories.Header", lang), badge: nil))
+        entries.append(.disclosure(id: id.count, section: .categories, link: .symonaGeneral, text: i18n("Settings.Categories.General", lang)))
+        entries.append(.disclosure(id: id.count, section: .categories, link: .symonaFeatures, text: "Symonagram"))
+        return filterSGItemListUIEntrires(entries: entries, by: state.searchQuery)
+    }
+
+    // MARK: Symonagram — our own features
+    if mode == .symona {
+        entries.append(.header(id: id.count, section: .ghost, text: i18n("Settings.Ghost.Header", lang), badge: nil))
+        entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostReadReceipts, value: SGSimpleSettings.shared.ghostReadReceipts, text: i18n("Settings.Ghost.ReadReceipts", lang), enabled: true))
+        entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostTyping, value: SGSimpleSettings.shared.ghostTyping, text: i18n("Settings.Ghost.Typing", lang), enabled: true))
+        entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostOnline, value: SGSimpleSettings.shared.ghostOnline, text: i18n("Settings.Ghost.Online", lang), enabled: true))
+        entries.append(.notice(id: id.count, section: .ghost, text: i18n("Settings.Ghost.Notice", lang)))
+        return filterSGItemListUIEntrires(entries: entries, by: state.searchQuery)
+    }
+
+    // mode == .general — all non-Symonagram settings below
+
     entries.append(.searchInput(id: id.count, section: .search, title: NSAttributedString(string: "🔍"), text: state.searchQuery ?? "", placeholder: strings.Common_Search))
     
     
@@ -259,17 +292,13 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
     entries.append(.toggle(id: id.count, section: .other, settingName: .hidePhoneInSettings, value: SGSimpleSettings.shared.hidePhoneInSettings, text: i18n("Settings.HidePhoneInSettingsUI", lang), enabled: true))
     entries.append(.notice(id: id.count, section: .other, text: i18n("Settings.HidePhoneInSettingsUI.Notice", lang)))
 
-    // MARK: Symonagram — Ghost mode section
-    entries.append(.header(id: id.count, section: .ghost, text: i18n("Settings.Ghost.Header", lang), badge: nil))
-    entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostReadReceipts, value: SGSimpleSettings.shared.ghostReadReceipts, text: i18n("Settings.Ghost.ReadReceipts", lang), enabled: true))
-    entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostTyping, value: SGSimpleSettings.shared.ghostTyping, text: i18n("Settings.Ghost.Typing", lang), enabled: true))
-    entries.append(.toggle(id: id.count, section: .ghost, settingName: .ghostOnline, value: SGSimpleSettings.shared.ghostOnline, text: i18n("Settings.Ghost.Online", lang), enabled: true))
-    entries.append(.notice(id: id.count, section: .ghost, text: i18n("Settings.Ghost.Notice", lang)))
+    // MARK: Symonagram — Swiftgram Pro folded into "Основные"
+    entries.append(.disclosure(id: id.count, section: .other, link: .symonaPro, text: "Symonagram Pro"))
 
     return filterSGItemListUIEntrires(entries: entries, by: state.searchQuery)
 }
 
-public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int? = nil*/) -> ViewController {
+public func sgSettingsController(context: AccountContext, mode: SGSettingsMode = .root/*, focusOnItemTag: Int? = nil*/) -> ViewController {
     var presentControllerImpl: ((ViewController, ViewControllerPresentationArguments?) -> Void)?
     var pushControllerImpl: ((ViewController) -> Void)?
 //    var getRootControllerImpl: (() -> UIViewController?)?
@@ -635,6 +664,13 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
                     }
                     strongContext.sharedContext.applicationBindings.openUrl(url)
                 })
+            // MARK: Symonagram — category navigation
+            case .symonaGeneral:
+                pushControllerImpl?(sgSettingsController(context: context, mode: .general))
+            case .symonaFeatures:
+                pushControllerImpl?(sgSettingsController(context: context, mode: .symona))
+            case .symonaPro:
+                pushControllerImpl?(context.sharedContext.makeSGProController(context: context))
         }
     }, searchInput: { searchQuery in
         updateState { state in
@@ -662,9 +698,10 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
         let callListSettings: CallListSettings = sharedData.entries[ApplicationSpecificSharedDataKeys.callListSettings]?.get(CallListSettings.self) ?? CallListSettings.defaultSettings
         let experimentalUISettings: ExperimentalUISettings = sharedData.entries[ApplicationSpecificSharedDataKeys.experimentalUISettings]?.get(ExperimentalUISettings.self) ?? ExperimentalUISettings.defaultSettings
         
-        let entries = SGControllerEntries(presentationData: presentationData, callListSettings: callListSettings, experimentalUISettings: experimentalUISettings, appConfiguration: appConfiguration, nameColors: PeerNameColors.with(availableReplyColors: availableReplyColors, availableProfileColors: availableProfileColors), state: state)
-        
-        let controllerState = ItemListControllerState(presentationData: ItemListPresentationData(presentationData), title: .text("Symonagram"), leftNavigationButton: nil, rightNavigationButton: nil, backNavigationButton: ItemListBackButton(title: presentationData.strings.Common_Back))
+        let entries = SGControllerEntries(presentationData: presentationData, callListSettings: callListSettings, experimentalUISettings: experimentalUISettings, appConfiguration: appConfiguration, nameColors: PeerNameColors.with(availableReplyColors: availableReplyColors, availableProfileColors: availableProfileColors), state: state, mode: mode)
+
+        let controllerTitle: String = mode == .general ? i18n("Settings.Categories.General", presentationData.strings.baseLanguageCode) : "Symonagram"
+        let controllerState = ItemListControllerState(presentationData: ItemListPresentationData(presentationData), title: .text(controllerTitle), leftNavigationButton: nil, rightNavigationButton: nil, backNavigationButton: ItemListBackButton(title: presentationData.strings.Common_Back))
         
         // TODO(swiftgram): focusOnItemTag support
         /* var index = 0

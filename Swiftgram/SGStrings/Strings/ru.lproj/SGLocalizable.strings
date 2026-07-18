@@ -274,6 +274,8 @@
 "Settings.NY.Notice" = "Доступны только на ограниченное время!";
 
 // MARK: Symonagram — Ghost mode
+"Settings.Categories.Header" = "КАТЕГОРИИ";
+"Settings.Categories.General" = "Основные";
 "Settings.Ghost.Header" = "GHOST MODE";
 "Settings.Ghost.ReadReceipts" = "Не читать сообщения собеседника";
 "Settings.Ghost.Typing" = "Не показывать статус «печатает»";
